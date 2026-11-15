@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#102b50" />
+  <meta name="description" content="GES recruitment application demonstration portal." />
+  <title>GES Recruitment Portal | Demonstration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner"><span><span class="status-dot"></span> DEMONSTRATION PORTAL</span><span>Ghana Education Service · Recruitment Application</span></div></div>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="GES Recruitment Portal home">
+      <div class="crest" aria-hidden="true"><span>GH</span><small>GES</small></div>
+      <div><strong>GHANA EDUCATION SERVICE</strong><small>RECRUITMENT APPLICATION PORTAL</small></div>
+    </a>
+    <div class="header-right"><span class="secure-label"><span class="shield">✓</span> Secure application experience</span><a href="#requirements" class="header-link">Application guide</a></div>
+  </header>
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span></span> RECRUITMENT · APPLICATION</div>
+        <h1>Your next chapter<br><em>starts in education.</em></h1>
+        <p>Complete your recruitment application online, review your information, and generate a printable application summary for your records.</p>
+        <div class="hero-actions"><button class="btn btn-gold" id="startBtn">Start application <span>→</span></button><a href="#requirements" class="text-link">View requirements <span>↓</span></a></div>
+        <div class="hero-foot"><div class="avatar-stack"><i>1</i><i>2</i><i>3</i></div><span>A guided, step-by-step application process</span></div>
+      </div>
+      <div class="hero-art" aria-label="Education themed illustration">
+        <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+        <div class="art-card"><div class="art-card-top"><span>APPLICATION PROCESS</span><b>01 — 07</b></div><div class="art-check"><span>✓</span><div><b>Personal information</b><small>Applicant details and contact</small></div></div><div class="art-check"><span>✓</span><div><b>Academic background</b><small>Qualifications and specialisation</small></div></div><div class="art-check"><span>3</span><div><b>Documents & submission</b><small>Review and download PDF</small></div></div><div class="art-progress"><span></span></div><small class="art-caption">A clear process from start to finish</small></div>
+        <div class="floating-note"><span class="note-icon">✦</span><div><b>Application summary</b><small>PDF ready after submission</small></div></div>
+      </div>
+    </section>
+    <section id="requirements" class="requirements section-wrap">
+      <div class="section-heading"><div><div class="eyebrow dark"><span></span> BEFORE YOU BEGIN</div><h2>Get ready to apply</h2></div><p>Have your personal details and supporting documents available before starting. Fields marked with an asterisk (*) are required.</p></div>
+      <div class="requirement-grid"><article><div class="req-icon">01</div><h3>Personal details</h3><p>Ghana Card details, contact information, date of birth and residential address.</p></article><article><div class="req-icon">02</div><h3>Education & postings</h3><p>Institution attended, qualification, specialisation and preferred posting location.</p></article><article><div class="req-icon">03</div><h3>Supporting documents</h3><p>Passport photograph, identification, certificates and other applicable documents.</p></article></div>
+      <div class="notice"><span class="notice-mark">i</span><p><b>Demonstration notice:</b> This is an independent demonstration website, not an official Ghana Education Service application service. Information is processed in your browser and is not submitted to GES or any government agency. Use sample information only.</p></div>
+    </section>
+    <section id="application" class="application-section hidden">
+      <div class="application-shell">
+        <aside class="form-sidebar"><div class="sidebar-label">APPLICATION FORM</div><h2>Let's get your application started.</h2><p>Complete each section in order. You can move back to review or update your answers.</p><div class="step-list" id="stepList"></div><div class="sidebar-help"><span>?</span><div><b>Need a moment?</b><small>Your progress is saved in this browser while you work.</small></div></div></aside>
+        <div class="form-main"><div class="form-topline"><span id="stepCounter">STEP 01 OF 07</span><span id="stepPercent">14% COMPLETE</span></div><div class="progress-track"><span id="progressBar"></span></div>
+          <form id="applicationForm" novalidate><div id="stepContent"></div><div class="form-error" id="formError" role="alert"></div><div class="form-navigation"><button type="button" class="btn btn-outline" id="backBtn">← Back</button><span class="save-note"><span>✓</span> Saved in this browser</span><button type="button" class="btn btn-primary" id="nextBtn">Continue <span>→</span></button></div></form>
+        </div>
+      </div>
+    </section>
+    <section id="success" class="success-section hidden"><div class="success-card"><div class="success-icon">✓</div><div class="eyebrow dark"><span></span> APPLICATION GENERATED</div><h2>Your application summary is ready.</h2><p>Your demonstration application has been completed. Your unique reference number is shown below. Download the PDF and keep it for your records.</p><div class="application-number"><small>APPLICATION ID</small><strong id="successId">GES-DEMO-000000</strong><button id="copyId" type="button" title="Copy application ID">Copy</button></div><div class="success-actions"><button class="btn btn-primary" id="downloadPdf">↓ Download application PDF</button><button class="btn btn-outline" id="newApplication">Start a new application</button></div><div class="success-disclaimer">Demonstration only · This reference is not a GES-issued application number.</div></div></section>
+  </main>
+  <footer><div class="footer-inner"><div class="footer-brand"><div class="crest small-crest"><span>GH</span><small>GES</small></div><div><b>GHANA EDUCATION SERVICE</b><small>RECRUITMENT APPLICATION PORTAL</small></div></div><span>Independent demonstration project · Not an official GES website</span></div></footer>
+</body>
+</html>
