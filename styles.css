@@ -76,3 +76,11 @@ body{background:#f4f6fa}
 .review-block{border:0;border-radius:0;margin:0 0 13px;overflow:hidden}.review-title{background:#edf4fd;color:#1c3554;padding:11px 14px;font:700 14px Manrope}.review-rows{border:1px solid #e1e6ed;border-top:0}.review-row{display:grid;grid-template-columns:35% 65%;gap:12px;padding:12px 14px;border-bottom:1px solid #e2e6ec}.review-row:last-child{border-bottom:0}.review-row small{font-size:11px;color:#5f7187}.review-row b{font-size:11px;font-weight:500;color:#1c2e46}.review-title button{float:right;color:#245dff;font-size:10px}
 .success-section{min-height:100vh;padding:55px 18px;background:#f4f6fa}.success-card{max-width:650px;margin:auto;border-radius:14px;padding:36px;background:white;box-shadow:0 15px 45px #102b5015}
 @media(max-width:700px){.auth-card{padding:28px 23px}.auth-logos{top:4%}.category-heading{margin:70px auto 28px}.category-grid{grid-template-columns:1fr}.category-card{min-height:130px}.application-section{padding:18px 10px 45px}.application-reference-heading{min-height:75px}.form-signout{right:2px;top:10px}.reference-brand b{font-size:9px}.application-title-glass h1{font-size:20px}#applicationForm{padding:19px 16px}.form-grid{grid-template-columns:1fr;gap:14px}.field.full{grid-column:auto}.form-navigation{gap:8px}.form-navigation .btn{padding:12px 14px}.review-row{grid-template-columns:42% 58%;gap:7px;padding:10px 9px}}
+.official-ges-logo {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    object-fit: contain;
+    margin: 0 auto 20px;
+}
