@@ -45,6 +45,17 @@
         </div>
       </div>
     </section>
+    <section id="categoryScreen" class="category-screen hidden">
+      <div class="category-brand"><div class="category-mark">GH<span>GES</span></div><div><strong>GHANA EDUCATION SERVICE</strong><small>RECRUITMENT APPLICATION PORTAL</small></div></div>
+      <div class="category-heading"><span class="category-kicker">APPLICATION CATEGORY</span><h1>Select your applicant category</h1><p>Choose the category that matches your qualification or the position you are applying for.</p></div>
+      <div class="category-grid">
+        <button type="button" class="category-card" data-category="College of Education Graduate"><span class="category-icon">01</span><strong>College of Education Graduate</strong><small>For graduates of Colleges of Education</small><span class="category-arrow">→</span></button>
+        <button type="button" class="category-card" data-category="University Graduate"><span class="category-icon">02</span><strong>University Graduate</strong><small>For applicants with university degrees</small><span class="category-arrow">→</span></button>
+        <button type="button" class="category-card" data-category="Diploma Holder"><span class="category-icon">03</span><strong>Diploma Holder</strong><small>For applicants with diploma qualifications</small><span class="category-arrow">→</span></button>
+        <button type="button" class="category-card" data-category="Non-Teaching Staff"><span class="category-icon">04</span><strong>Non-Teaching Staff</strong><small>For administrative and support staff applicants</small><span class="category-arrow">→</span></button>
+      </div>
+      <button type="button" class="category-signout" id="categorySignOut">Sign Out</button>
+    </section>
     <section id="home" class="hero hidden">
       <div class="hero-copy">
         <div class="eyebrow"><span></span> RECRUITMENT · APPLICATION</div>
@@ -67,7 +78,7 @@
     <section id="application" class="application-section hidden">
       <div class="application-shell">
         <aside class="form-sidebar"><div class="sidebar-label">APPLICATION FORM</div><h2>Let's get your application started.</h2><p>Complete each section in order. You can move back to review or update your answers.</p><div class="step-list" id="stepList"></div><div class="sidebar-help"><span>?</span><div><b>Need a moment?</b><small>Your progress is saved in this browser while you work.</small></div></div></aside>
-        <div class="form-main"><div class="form-topline"><span id="stepCounter">STEP 01 OF 07</span><span id="stepPercent">14% COMPLETE</span></div><div class="progress-track"><span id="progressBar"></span></div>
+        <div class="form-main"><div class="application-reference-heading"><div class="reference-brand"><span class="reference-crest">GH</span><span><b>GHANA EDUCATION SERVICE</b><small>RECRUITMENT APPLICATION PORTAL</small></span></div><button type="button" id="formSignOut" class="form-signout">Sign Out</button></div><div class="application-title-glass"><h1 id="applicationTitle">Application for Recruitment</h1><p id="applicationSubtitle">Step 1 of 2: Personal Information</p></div><div class="ghana-card-summary"><label>Ghana Card #</label><strong id="ghanaCardSummary">Not provided</strong></div><div class="form-topline"><span id="stepCounter">STEP 01 OF 07</span><span id="stepPercent">14% COMPLETE</span></div><div class="progress-track"><span id="progressBar"></span></div>
           <form id="applicationForm" novalidate><div id="stepContent"></div><div class="form-error" id="formError" role="alert"></div><div class="form-navigation"><button type="button" class="btn btn-outline" id="backBtn">← Back</button><span class="save-note"><span>✓</span> Saved in this browser</span><button type="button" class="btn btn-primary" id="nextBtn">Continue <span>→</span></button></div></form>
         </div>
       </div>
