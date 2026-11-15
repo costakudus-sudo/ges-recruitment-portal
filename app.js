@@ -21,7 +21,11 @@
   const uploadDefs = [
     ['passport','Passport photograph',true,'Image file (JPG, PNG)'],['ghanaFront','Ghana Card (front)',true,'Image or PDF'],['ghanaBack','Ghana Card (back)',true,'Image or PDF'],['birthCert','Birth certificate',true,'PDF or image'],['nationalService','National Service certificate',true,'PDF or image'],['degreeCert','Degree certificate',true,'PDF or image'],['ntcCert','NTC licensure certificate',true,'PDF or image'],['driverLicence','Driver licence (drivers only)',false,'Optional · PDF or image']
   ];
-  const data = {}; const files = {}; let current=0, applicationId='';
+  const SUPABASE_URL = 'https://syjhvohrkfrjcmqvoggn.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_C6XUqycvpi1reUc_kinEJw_YcbBLuEz';
+  const DOCUMENT_BUCKET = 'ges-applicant-documents';
+  const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const data = {}; const files = {}; let current=0, applicationId='', isSubmitting=false;
   const stepContent=$('#stepContent'), formError=$('#formError');
   const esc = v => String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function fieldHtml(f){const [id,label,type,opts,req]=f;if(id==='__section')return `<div class="form-section-title"><h3>${esc(label)}</h3><p>${label==='Personal Details'?'Basic information about yourself':label==='Education'?'Educational qualification':label==='Postings'?'Posting preferences':label==='ID Verification'?'Secure identification information':label==='Other Information'?'Additional personal details':'In case of emergency, who should we contact?'}</p></div>`;const required=req?'<span class="required"> *</span>':'';let control='';if(type==='select'){control=`<select id="${id}" name="${id}" ${req?'required':''}><option value="">Select ${label.toLowerCase()}</option>${opts.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select>`}else{control=`<input id="${id}" name="${id}" type="${type}" placeholder="${type==='date'?'':esc(opts)}" ${req?'required':''} ${type==='number'?'min="0"':''}>`}return `<div class="field"><label for="${id}">${label}${required}</label>${control}</div>`}
@@ -44,7 +48,56 @@
   $('#formSignOut').addEventListener('click',()=>{$('#application').classList.add('hidden');$('#authScreen').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});});
   $('#loginToggle').addEventListener('click',e=>{e.preventDefault();$('#loginPanel').classList.toggle('hidden')});
   $('#loginBtn').addEventListener('click',()=>{const saved=localStorage.getItem('gesDemoApplicationId')||'';const entered=$('#loginAppId').value.trim();if(saved&&entered===saved){$('#authScreen').classList.add('hidden');$('#categoryScreen').classList.remove('hidden');$('#categoryScreen').scrollIntoView({behavior:'smooth'})}else{alert('No matching application was found in this browser. This demonstration does not have a central applicant account database.')}});$('#backBtn').addEventListener('click',()=>{collect();saveLocal();if(current>0){current--;renderStep()}});
-  $('#nextBtn').addEventListener('click',()=>{collect();if(!validate())return;saveLocal();if(current<steps.length-1){current++;renderStep();$('.form-main').scrollIntoView({behavior:'smooth',block:'start'})}else{applicationId='GESRP-'+new Date().getFullYear()+'-'+Date.now().toString().slice(-8)+Math.floor(1000+Math.random()*9000);localStorage.setItem('gesDemoApplicationId',applicationId);$('#successId').textContent=applicationId;localStorage.setItem('gesDemoApplicationId',applicationId);$('#application').classList.add('hidden');$('#success').classList.remove('hidden');$('#success').scrollIntoView({behavior:'smooth'});}});
+  async function submitApplication(){
+    if(isSubmitting)return;
+    if(!supabaseClient){formError.textContent='The application database could not be initialized. Please refresh and try again.';return}
+    isSubmitting=true;$('#nextBtn').disabled=true;$('#nextBtn').textContent='Submitting...';
+    applicationId='GESRP-'+new Date().getFullYear()+'-'+Date.now().toString().slice(-8)+Math.floor(1000+Math.random()*9000);
+    const documentPaths={};
+    try{
+      for(const [id,label] of uploadDefs){
+        const file=files[id];if(!file)continue;
+        const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+        const path=applicationId+'/'+id+'-'+safeName;
+        const {error:uploadError}=await supabaseClient.storage.from(DOCUMENT_BUCKET).upload(path,file,{cacheControl:'3600',upsert:false});
+        if(uploadError)throw new Error('Could not upload '+label+': '+uploadError.message);
+        documentPaths[id]=path;
+      }
+      const nullable=(v)=>v?String(v):null;
+      const record={
+        application_id:applicationId,recruitment_type:nullable(data.recruitmentType),
+        first_name:nullable(data.firstName),middle_name:nullable(data.middleName),last_name:nullable(data.lastName),
+        email:nullable(data.email),mobile:nullable(data.mobile),gender:nullable(data.gender),
+        current_address:nullable(data.currentAddress),current_region:nullable(data.currentRegion),current_district:nullable(data.currentDistrict),
+        qualification:nullable(data.qualification),institution:nullable(data.institution),index_number:nullable(data.indexNumber),
+        programme:nullable(data.programme),specialisation:nullable(data.specialisation),class_acquired:nullable(data.classAcquired),
+        preferred_region:nullable(data.preferredRegion),preferred_district:nullable(data.preferredDistrict),
+        nationality:nullable(data.nationality),hometown:nullable(data.hometown),home_region:nullable(data.homeRegion),home_district:nullable(data.homeDistrict),
+        marital_status:nullable(data.maritalStatus),next_of_kin_name:nullable(data.kinName),next_of_kin_phone:nullable(data.kinPhone),
+        next_of_kin_relationship:nullable(data.kinRelationship),application_status:'Submitted (Demo)',is_demo:true,
+        ghana_card:nullable(data.ghanaCard),title:nullable(data.title),dob:nullable(data.dob),
+        primary_language:nullable(data.primaryLanguage),secondary_language:nullable(data.secondaryLanguage),
+        disability:nullable(data.disability),previous_employer:nullable(data.previousEmployer),ssnit:nullable(data.ssnit),
+        national_service_id:nullable(data.nationalServiceId),ntc_number:nullable(data.ntcNumber),
+        religion:nullable(data.religion),children:data.children===''||data.children===undefined?null:Number(data.children),
+        kin_name:nullable(data.kinName),kin_phone:nullable(data.kinPhone),kin_relationship:nullable(data.kinRelationship),
+        passport_path:documentPaths.passport||null,ghana_front_path:documentPaths.ghanaFront||null,
+        ghana_back_path:documentPaths.ghanaBack||null,birth_cert_path:documentPaths.birthCert||null,
+        national_service_path:documentPaths.nationalService||null,degree_cert_path:documentPaths.degreeCert||null,
+        ntc_cert_path:documentPaths.ntcCert||null,driver_licence_path:documentPaths.driverLicence||null,
+        status:'Submitted (Demo)'
+      };
+      const {error}=await supabaseClient.from('applications').insert(record);
+      if(error)throw error;
+      localStorage.setItem('gesDemoApplicationId',applicationId);
+      $('#successId').textContent=applicationId;$('#application').classList.add('hidden');$('#success').classList.remove('hidden');$('#success').scrollIntoView({behavior:'smooth'});
+    }catch(error){
+      console.error('Supabase submission failed:',error);
+      formError.textContent='Submission failed: '+(error.message||'Please check your connection and try again.');
+      isSubmitting=false;$('#nextBtn').disabled=false;$('#nextBtn').innerHTML='Confirm & Submit <span>✓</span>';
+    }
+  }
+  $('#nextBtn').addEventListener('click',()=>{collect();if(!validate())return;saveLocal();if(current<steps.length-1){current++;renderStep();$('.form-main').scrollIntoView({behavior:'smooth',block:'start'})}else{submitApplication()}});
   stepContent.addEventListener('change',e=>{if(e.target.type==='file'){const f=e.target.files[0];if(f){files[e.target.id]=f;const state=$('#state-'+e.target.id);if(state)state.textContent='✓ '+f.name}}});
   stepContent.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(b){collect();current=0;renderStep();$('.form-main').scrollIntoView({behavior:'smooth'})}});
   $('#copyId').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(applicationId);$('#copyId').textContent='Copied'}catch(e){$('#copyId').textContent='Select ID above'}});
