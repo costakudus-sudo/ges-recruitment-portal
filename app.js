@@ -50,7 +50,31 @@
   $('#copyId').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(applicationId);$('#copyId').textContent='Copied'}catch(e){$('#copyId').textContent='Select ID above'}});
   $('#newApplication').addEventListener('click',()=>{Object.keys(data).forEach(k=>delete data[k]);Object.keys(files).forEach(k=>delete files[k]);localStorage.removeItem('gesDemoDraft');localStorage.removeItem('gesDemoApplicationId');current=0;applicationId='';$('#success').classList.add('hidden');$('#authScreen').classList.remove('hidden');$('#application').classList.add('hidden');$('#signupForm').reset();$('#loginPanel').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})});
   $('#downloadPdf').addEventListener('click',generatePdf);
-  async function generatePdf(){if(!window.jspdf){alert('PDF library is still loading. Please try again.');return}const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});let passportData=null;if(files.passport&&files.passport.type.startsWith('image/')){passportData=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>resolve(null);reader.readAsDataURL(files.passport)})}const W=210,H=297,margin=16;let page=1,y=19;const navy=[16,43,80],gold=[194,151,64],gray=[95,107,122],line=[220,225,232];const labels={recruitmentType:'Recruitment Type',ghanaCard:'Ghana Card #',title:'Title',firstName:'First Name',middleName:'Middle Name',lastName:'Last Name',email:'Email Address',mobile:'Mobile Number',dob:'Date of Birth',gender:'Gender',primaryLanguage:'Primary Language',secondaryLanguage:'Secondary Language',currentAddress:'Current Address',gpsAddress:'GPS Address',postalAddress:'Postal Address',currentRegion:'Current Region',currentDistrict:'Current District',disability:'Disability Status',institution:'Institution Attended',indexNumber:'Index Number',qualification:'Qualification',programme:'Programme / Level of Specialization',classAcquired:'Class Acquired',specialisation:'Area of Specialisation',preferredRegion:'Preferred Region',preferredDistrict:'Preferred District',previousEmployer:'Previous Employer',ssnit:'Social Security (SSNIT) #',nationalServiceId:'National Service ID',ntcNumber:'NTC License Number',nationality:'Nationality',hometown:'Hometown',homeRegion:'Home Town Region',homeDistrict:'Home Town District',religion:'Religion',maritalStatus:'Marital Status',children:'Number of Kids',kinName:'Name',kinPhone:'Contact Number',kinRelationship:'Relationship'};const groups=[['Application Details',['recruitmentType','ghanaCard','title','firstName','middleName','lastName','email','mobile','dob','gender','primaryLanguage','secondaryLanguage','currentAddress']],['Address Details',['gpsAddress','postalAddress','currentRegion','currentDistrict','disability']],['Education',['institution','indexNumber','qualification','classAcquired','specialisation']],['Postings',['preferredRegion','preferredDistrict','previousEmployer']],['ID Verification',['ssnit','nationalServiceId','ntcNumber']],['Other Information',['nationality','hometown','homeRegion','homeDistrict','religion','maritalStatus','children']],['Next of Kin',['kinName','kinPhone','kinRelationship']]];
+  async function ensurePdfLibrary(){
+    if(window.jspdf&&window.jspdf.jsPDF)return true;
+    const sources=[
+      'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js',
+      'https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js',
+      'https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js'
+    ];
+    for(const src of sources){
+      const loaded=await new Promise(resolve=>{
+        const script=document.createElement('script');
+        const timeout=setTimeout(()=>{script.remove();resolve(false)},10000);
+        script.src=src;
+        script.onload=()=>{clearTimeout(timeout);resolve(!!(window.jspdf&&window.jspdf.jsPDF))};
+        script.onerror=()=>{clearTimeout(timeout);script.remove();resolve(false)};
+        document.head.appendChild(script);
+      });
+      if(loaded)return true;
+    }
+    return false;
+  }
+  async function generatePdf(){
+    const ready=await ensurePdfLibrary();
+    if(!ready){alert('The PDF service could not be reached. Please check your internet connection and try again.');return}
+    try{
+      const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});let passportData=null;if(files.passport&&files.passport.type.startsWith('image/')){passportData=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>resolve(null);reader.readAsDataURL(files.passport)})}const W=210,H=297,margin=16;let page=1,y=19;const navy=[16,43,80],gold=[194,151,64],gray=[95,107,122],line=[220,225,232];const labels={recruitmentType:'Recruitment Type',ghanaCard:'Ghana Card #',title:'Title',firstName:'First Name',middleName:'Middle Name',lastName:'Last Name',email:'Email Address',mobile:'Mobile Number',dob:'Date of Birth',gender:'Gender',primaryLanguage:'Primary Language',secondaryLanguage:'Secondary Language',currentAddress:'Current Address',gpsAddress:'GPS Address',postalAddress:'Postal Address',currentRegion:'Current Region',currentDistrict:'Current District',disability:'Disability Status',institution:'Institution Attended',indexNumber:'Index Number',qualification:'Qualification',programme:'Programme / Level of Specialization',classAcquired:'Class Acquired',specialisation:'Area of Specialisation',preferredRegion:'Preferred Region',preferredDistrict:'Preferred District',previousEmployer:'Previous Employer',ssnit:'Social Security (SSNIT) #',nationalServiceId:'National Service ID',ntcNumber:'NTC License Number',nationality:'Nationality',hometown:'Hometown',homeRegion:'Home Town Region',homeDistrict:'Home Town District',religion:'Religion',maritalStatus:'Marital Status',children:'Number of Kids',kinName:'Name',kinPhone:'Contact Number',kinRelationship:'Relationship'};const groups=[['Application Details',['recruitmentType','ghanaCard','title','firstName','middleName','lastName','email','mobile','dob','gender','primaryLanguage','secondaryLanguage','currentAddress']],['Address Details',['gpsAddress','postalAddress','currentRegion','currentDistrict','disability']],['Education',['institution','indexNumber','qualification','classAcquired','specialisation']],['Postings',['preferredRegion','preferredDistrict','previousEmployer']],['ID Verification',['ssnit','nationalServiceId','ntcNumber']],['Other Information',['nationality','hometown','homeRegion','homeDistrict','religion','maritalStatus','children']],['Next of Kin',['kinName','kinPhone','kinRelationship']]];
     function header(){doc.setFillColor(...navy);doc.rect(0,0,W,9,'F');doc.setTextColor(...navy);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('GHANA EDUCATION SERVICE',W/2,22,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...gray);doc.text('RECRUITMENT APPLICATION SUMMARY',W/2,28,{align:'center'});doc.setFontSize(9);doc.setTextColor(...navy);doc.text('Application ID: '+applicationId,W/2,34,{align:'center'});doc.setDrawColor(...gold);doc.setLineWidth(.6);doc.line(margin,39,W-margin,39);y=47;}
     function footer(){doc.setDrawColor(...line);doc.line(margin,H-14,W-margin,H-14);doc.setFontSize(7);doc.setTextColor(130,140,150);doc.text('DEMONSTRATION APPLICATION · NOT AN OFFICIAL GES SUBMISSION',margin,H-9);doc.text('Generated: '+new Date().toLocaleString(),W/2,H-9,{align:'center'});doc.text(`Page ${page}`,W-margin,H-9,{align:'right'});}
     function newPage(){footer();doc.addPage();page++;header()}
@@ -61,6 +85,10 @@
     section('Uploaded Documents');uploadDefs.forEach(([id,label,required])=>row(label,files[id]?'Uploaded ✓':(required?'Not uploaded':'N/A')));
     if(y>H-35)newPage();doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(...gray);doc.text('This document is a locally generated demonstration summary. It is not proof of an official application or recruitment status.',margin,y+7,{maxWidth:W-margin*2});
     for(let p=1;p<=doc.getNumberOfPages();p++){doc.setPage(p);footer()}doc.save(`GES-Application-${applicationId}.pdf`);
+    }catch(error){
+      console.error('PDF generation failed:',error);
+      alert('The PDF could not be generated. Please refresh the page and try again. If the problem continues, try another browser or allow downloads for this site.');
+    }
   }
   loadLocal();
 })();
